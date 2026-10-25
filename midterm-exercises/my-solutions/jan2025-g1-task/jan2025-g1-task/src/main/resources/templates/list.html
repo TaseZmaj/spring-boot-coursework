@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Archaeological Site List</title>
+</head>
+<body>
+
+<div>
+    <!-- The form below should invoke the method ArchaeologicalSiteController.listAll -->
+    <form id="filter-form" th:method="GET" action="/archaeological-sites">
+        <label for="name">Site Name</label>
+        <input id="name" type="text" name="name"/>
+
+        <label for="areaSize">Site Area Size (in square meters)</label>
+        <input id="areaSize" type="number" name="areaSize"/>
+
+        <label for="rating">Rating</label>
+        <input id="rating" type="number" step="0.1" min="0" max="10" name="rating"/>
+
+        <label for="period">Historical Period</label>
+        <select id="period" name="period">
+            <option value="">All</option>
+            <!-- For each HistoricalPeriod you should have one <option> like below  -->
+            <option th:each="p: ${periods}"
+                    th:value="${p}"
+                    th:text="${p}"
+            >
+            ></option>
+        </select>
+
+        <label for="location">SiteLocation</label>
+        <select id="location" name="locationId">
+            <option value="">All</option>
+            <!-- For each location you should have one <option> like below  -->
+            <option th:each="l: ${locations}"
+                    th:value="${l.getId()}"
+                    th:text="${l.getCity()} + ' ' + ${l.getCountry()}"
+                ></option>
+        </select>
+
+        <button id="filter" type="submit">Filter</button>
+    </form>
+
+    <div>
+        <!-- ArchaeologicalSiteController.showAdd -->
+        <a sec:authorize="hasRole('ROLE_ADMIN')" class="add-item" href="archaeological-sites/add">Add new archaeological site</a>
+    </div>
+
+    <table>
+        <tr>
+            <th>Site Name</th>
+            <th>Area Size</th>
+            <th>Rating</th>
+            <th>Historical Period</th>
+            <th>SiteLocation</th>
+            <th>Open/Closed</th>
+            <th>Actions</th>
+        </tr>
+        <!-- For each archaeological site you should have one <tr> like below -->
+        <tr th:each="archSite : ${page.getContent()}" class="item">
+            <td th:text="${archSite.getName()}">[site.name]</td>
+            <td th:text="${archSite.getAreaSize()}">[site.areaSize]</td>
+            <td th:text="${archSite.getRating()}">[site.rating]</td>
+            <td th:text="${archSite.getPeriod()}">[site.period]</td>
+            <td th:text="${archSite.getLocation().getCity() + ' ' + archSite.getLocation().getCountry()}">[site.location.city], [site.location.country]</td>
+            <td th:text="${archSite.isClosed() ? 'CLOSED' : 'OPEN'}">[site.closed] -> OPEN/CLOSED</td>
+            <td>
+                <!-- ArchaeologicalSiteController.edit -->
+                <a sec:authorize="hasRole('ROLE_ADMIN')" class="edit-item" th:href="@{'/archaeological-sites/edit/{id}' (id=${archSite.getId()})}">Edit</a>
+                <!-- ArchaeologicalSiteController.delete -->
+                <form sec:authorize="hasRole('ROLE_ADMIN')" method="POST" th:action="@{'/archaeological-sites/delete/{id}' (id=${archSite.getId()})}">
+                    <button type="submit" class="delete-item">Delete</button>
+                </form>
+
+                <!-- ArchaeologicalSiteController.close -->
+                <form sec:authorize="hasRole('ROLE_ADMIN')" method="POST" th:action="@{'/archaeological-sites/close/{id}' (id=${archSite.getId()})}">
+                    <button th:if="${!archSite.isClosed()}" type="submit" class="close-item">Close</button>
+                </form>
+
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+
+</body>
+</html>

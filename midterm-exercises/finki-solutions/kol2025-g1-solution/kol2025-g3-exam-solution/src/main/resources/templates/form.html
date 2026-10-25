@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WP Exam</title>
+</head>
+<body>
+<!-- The form should submit to ExpensesController.create or ExpensesController.update,
+     depending on whether we are creating or editing an expense -->
+<form method="post" th:action="@{${expense != null} ? '/expenses/'  + ${expense.id} : '/expenses'}">
+    <div>
+        <label for="title">Title</label>
+        <input type="text"
+               id="title"
+               name="title"
+               th:value="${expense != null} ? ${expense.title} : ''"
+               required>
+    </div>
+    <div>
+        <label for="dateCreated">Date of Creation</label>
+        <input type="date"
+               id="dateCreated"
+               name="dateCreated"
+               th:value="${expense != null} ? ${expense.dateCreated} : ''"
+               required>
+    </div>
+    <div>
+        <label for="amount">Amount</label>
+        <input type="number"
+               id="amount"
+               name="amount"
+               th:value="${expense != null} ? ${expense.amount} : ''"
+               required>
+    </div>
+    <div>
+        <label for="daysToExpire">Days to expire</label>
+        <input type="number"
+               id="daysToExpire"
+               name="daysToExpire"
+               th:value="${expense != null} ? ${expense.daysToExpire} : ''"
+               required>
+    </div>
+    <div>
+        <label for="expenseCategory">Expense Category</label><br/>
+        <select id="expenseCategory" name="expenseCategory" multiple="multiple" size="5">
+            <option th:each="c : ${categories}" th:value="${c.name()}" th:text="${c.name()}"
+                    th:selected="${expense != null && expense.expenseCategory == c}"></option>
+        </select>
+    </div>
+    <div>
+        <label for="vendor">Vendor</label><br/>
+        <select id="vendor" name="vendor" multiple="multiple" size="5">
+            <option th:each="v: ${vendors}" th:value="${v.id}" th:text="${v.name}"
+                    th:selected="${expense != null && expense.vendor.id == v.id}"></option>
+        </select>
+    </div>
+
+    <button id="submit" type="submit">Submit</button>
+    <a id="back" href="/expenses" type="button" class="btn btn-primary">Back to expenses</a>
+</form>
+
+<div>
+    <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+
+</body>
+</html>

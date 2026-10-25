@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>national park Form</title>
+</head>
+<body>
+<!-- The form should submit to NationalParkController.create or NationalParkController.update,
+     depending on whether we are creating or editing a national park -->
+<form method="post" th:action="@{${nationalPark == null ? '/national-parks' : '/national-parks/' + nationalPark.getId()}}">
+    <div>
+        <label for="name">National Park Name</label>
+        <input type="text"
+               id="name"
+               name="name"
+               th:value="${nationalPark?.getName()}"
+               required>
+    </div>
+
+    <div>
+        <label for="areaSize">Area Size (in square meters)</label>
+        <input type="number"
+               id="areaSize"
+               name="areaSize"
+               th:value="${nationalPark?.getAreaSize()}"
+               required>
+    </div>
+
+    <div>
+        <label for="rating">Rating</label><br/>
+        <input type="number"
+               id="rating"
+               name="rating"
+               step="0.1"
+               min="0"
+               max="10"
+               th:value="${nationalPark?.getRating()}"
+               required>
+    </div>
+
+    <div>
+        <label for="parkType">National Park Type</label><br/>
+        <select id="parkType" name="parkType" size="5" required>
+            <!-- For each ParkType you should have one <option> like below  -->
+            <option th:each="pt : ${parkTypes}"
+                    th:text="${pt}"
+                    th:value="${pt}"
+                    th:selected="${nationalPark?.getParkType() == pt}">
+            >
+            </option>
+        </select>
+    </div>
+
+    <div>
+        <label for="location">ParkLocation</label><br/>
+        <select id="location" name="locationId" required size="5">
+            <!-- For each location you should have one <option> like below  -->
+            <option th:each="pl : ${locations}"
+                    th:value="${pl.getId()}"
+                    th:text="${pl.getCountry()} + ' ' + ${pl.getContinent()}"
+                    th:selected="${nationalPark?.location?.id == pl.id}">
+            </option>
+        </select>
+    </div>
+
+    <button id="submit" type="submit">Submit</button>
+    <a id="back" href="/national-parks" type="button" class="btn btn-primary">Back to national parks</a>
+</form>
+
+<div>
+    <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>WP Exam</title>
+</head>
+<body>
+
+<div>
+    <!-- The form below should invoke the method ExpensesController.listAll -->
+    <form id="filter-form" method="GET" action="/expenses">
+        <label for="title">Title</label>
+        <input id="title" type="text" name="title" th:value="${title}"/>
+        <label for="expenseCategory">Expense Category</label>
+        <select id="expenseCategory" name="expenseCategory">
+            <option value="">All</option>
+            <option th:each="c : ${categories}"
+                    th:text="${c.name()}"
+                    th:value="${c.name()}"
+                    th:selected="${expenseCategory == c}">
+            ></option>
+        </select>
+        <label for="vendor">Vendor</label>
+        <select id="vendor" name="vendor">
+            <option value="">All</option>
+            <option th:each="v : ${vendors}"
+                    th:text="${v.getName()}"
+                    th:value="${v.getId()}"
+                    th:selected="${v.getId() != null && vendor == v.getId()}">
+                ></option>
+        </select>
+        <button id="filter" type="submit">Filter</button>
+    </form>
+    <div>
+        <!-- ExpensesController.showAdd -->
+        <a href="/expenses/add" class="add-item" sec:authorize="hasRole('ROLE_ADMIN')">
+            Add new expense
+        </a>
+    </div>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Date of Creation</th>
+            <th>Amount</th>
+            <th>Expense Category</th>
+            <th>Vendor</th>
+            <th>Days to expire</th>
+            <th>Actions</th>
+        </tr>
+        <!-- For each expense you should have one <tr> like below -->
+        <tr th:each="expense : ${page.getContent()}" class="item">
+            <td th:text="${expense.title}"></td>
+            <td th:text="${expense.getDateCreated()}"></td>
+            <td th:text="${expense.getAmount()}"></td>
+            <td th:text="${expense.getExpenseCategory()}"></td>
+            <td th:text="${expense.getVendor().getName()}"></td>
+            <td th:text="${expense.getDaysToExpire()}"></td>
+            <td>
+                <!-- ExpensesController.delete -->
+                <form th:action="@{'/expenses/delete/{id}' (id=${expense.getId()})}" method="POST" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <button type="submit" class="delete-item">Delete</button>
+                </form>
+                <!-- ExpensesController.showEdit -->
+                <a class="edit-item" th:href="@{'/expenses/edit/{id}' (id=${expense.getId()})}" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+                <!-- ExpensesController.extend -->
+                <form th:action="@{'/expenses/extend/{id}' (id=${expense.getId()})}" method="POST" sec:authorize="hasRole('ROLE_USER')">
+                    <button type="submit" class="extend-item">Extend expiration</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<div>
+    <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WP Exam</title>
+</head>
+<body>
+
+<div>
+    <!-- The form below should invoke the method ExpensesController.listAll -->
+    <form id="filter-form" method="get" th:action="@{/expenses}">
+        <label for="title">Title</label>
+        <input id="title" type="text" name="title" th:value="${title}"/>
+        <label for="expenseCategory">Expense Category</label><br/>
+        <select id="expenseCategory" name="expenseCategory">
+            <option value="">All</option>
+            <option th:each="c : ${categories}" th:value="${c.name()}" th:text="${c.name()}"
+                    th:selected="${expenseCategory == c}"></option>
+        </select>
+        <label for="vendor">Vendor</label><br/>
+        <select id="vendor" name="vendor">
+            <option value="">All</option>
+            <option th:each="v: ${vendors}" th:value="${v.id}" th:text="${v.name}"
+                    th:selected="${vendor == v}"></option>
+        </select>
+        <button id="filter" type="submit">Filter</button>
+    </form>
+    <div>
+        <!-- ExpensesController.showAdd -->
+        <a th:href="@{/expenses/add}" class="add-item" sec:authorize="hasRole('ROLE_ADMIN')">
+            Add new expense
+        </a>
+    </div>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Date of Creation</th>
+            <th>Amount</th>
+            <th>Expense Category</th>
+            <th>Vendor</th>
+            <th>Days to expire</th>
+            <th>Actions</th>
+        </tr>
+        <!-- For each expense you should have one <tr> like below -->
+        <tr class="item" th:each="e : ${page.getContent()}">
+            <td th:text="${e.title}"></td>
+            <td th:text="${e.dateCreated}"></td>
+            <td th:text="${e.amount}"></td>
+            <td th:text="${e.expenseCategory.name()}"></td>
+            <td th:text="${e.vendor.name}"></td>
+            <td th:text="${e.daysToExpire}"></td>
+            <td>
+                <!-- ExpensesController.delete -->
+                <form method="post" th:action="@{'/expenses/delete/{id}' (id=${e.id})}" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <button type="submit" class="delete-item">Delete</button>
+                </form>
+                <!-- ExpensesController.showEdit -->
+                <a class="edit-item" th:href="@{'/expenses/edit/{id}' (id=${e.id})}" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+                <!-- ExpensesController.extend -->
+                <form method="post" th:action="@{'/expenses/extend/{id}' (id=${e.id})}" sec:authorize="hasRole('ROLE_USER')">
+                    <button type="submit" class="extend-item">Extend expiration</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <div>
+        <div class="row">
+            <div class="col-8">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="cursor-pointer page-item" th:classappend="${page.isFirst()} ? 'disabled' : ''">
+                            <a class="page-link" href="#" onClick="updateQueryStringParameter('pageNum', 1)">First</a>
+                        </li>
+                        <li class="page-item" th:classappend="${page.hasPrevious()} ? '': 'disabled'">
+                            <a class="page-link" href="#"
+                               onClick="updateQueryStringParameter('pageNum', this.getAttribute('page-number'))"
+                               th:page-number="${page.number}">Previous</a>
+                        </li>
+                        <li th:each="pageNum : ${#numbers.sequence(T(java.lang.Math).max(1,page.number-5), (page.totalPages == 0? 1: T(java.lang.Math).min(page.totalPages,page.number+5)))}"
+                            th:class="${page.number+1 == pageNum} ? 'page-item active' : 'page-item'">
+                            <a class="page-link" href="#"
+                               onClick="updateQueryStringParameter('pageNum', this.getAttribute('page-number'))"
+                               th:page-number="${pageNum}" th:text="${pageNum}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${page.hasNext()} ? '': 'disabled'">
+                            <a class="page-link" href="#"
+                               onClick="updateQueryStringParameter('pageNum', this.getAttribute('page-number'))"
+                               th:page-number="${page.number+2}">Next</a>
+                        </li>
+                        <li class="page-item" th:classappend="${page.isLast()} ? 'disabled' : ''">
+                            <a class="page-link" href="#"
+                               onClick="updateQueryStringParameter('pageNum', this.getAttribute('page-number'))"
+                               th:page-number="${page.totalPages}">Last</a>
+
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="col-4">
+                <div class="d-flex align-items-center mb-3">
+                    <label for="results" class="mr-2 mb-0">Results by page: </label>
+
+                    <select id="results" class="form-control custom-select" style="max-width: 100px;"
+                            onchange="updateQueryStringParameter('pageSize',this.value)">
+                        <option value="10" th:selected="${page.size == 10}">10</option>
+                        <option value="20" th:selected="${page.size == 20}">20</option>
+                        <option value="50" th:selected="${page.size == 50}">50</option>
+                        <option value="100" th:selected="${page.size == 100}">100</option>
+                        <option value="1000" th:selected="${page.size == 1000}">1000</option>
+                    </select>
+                    <span class="ms-1 me-1"> / Total: </span>
+                    <b class="ms-1" th:text="${page.totalElements}"></b>
+                </div>
+            </div>
+        </div>
+        <script th:inline="javascript">
+            function updateQueryStringParameter(key, value) {
+                var uri = window.location.href;
+                var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+                var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+                if (uri.match(re)) {
+                    uri = uri.replace(re, '$1' + key + "=" + value + '$2');
+                } else {
+                    uri = uri + separator + key + "=" + value;
+                }
+                window.location = uri;
+            }
+        </script>
+
+
+    </div>
+
+</div>
+<div>
+    <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+</body>
+</html>
