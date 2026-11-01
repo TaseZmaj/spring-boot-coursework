@@ -10,21 +10,21 @@
   <img src="https://img.shields.io/badge/H2_Database-09476B?style=for-the-badge&logoColor=white" alt="H2" />
 </p>
 
-## 📌 About this repository
+## About this repository
 
 This repo contains the auditory exercises, laboratory exercises and practice midterm exams from the course. The code follows the course material closely. I wrote it alongside the lectures to learn the framework's syntax and understand what Spring Boot does under the hood.
 
 For a full Spring Boot application, see the [Cryptocurrency Market Tracker](https://github.com/TaseZmaj/cryptocurrency-market-tracker-app), a collaborative project I co-developed with two teammates.
 
-## 🧠 What I learned
+## What I learned
 
-- 🏗️ **Layered architecture:** separating controllers, services and repositories, and wiring them with dependency injection
-- 🌐 **Spring MVC:** request mapping, form handling and server-side rendering with Thymeleaf
-- 🗄️ **Spring Data JPA:** entities, relationships, repositories and queries, backed by an in-memory H2 database
-- 🔐 **Spring Security:** authentication, role-based authorization and security-aware views
-- ✂️ **Lombok:** removing boilerplate from entities and DTOs
+-  **Layered architecture:** separating controllers, services and repositories, and wiring them with dependency injection
+-  **Spring MVC:** request mapping, form handling and server-side rendering with Thymeleaf
+-  **Spring Data JPA:** entities, relationships, repositories and queries, backed by an in-memory H2 database
+-  **Spring Security:** authentication, role-based authorization and security-aware views
+-  **Lombok:** removing boilerplate from entities and DTOs
 
-## 🧰 Tech stack
+## Tech stack
 
 | Area      | Technologies                                              |
 | --------- | --------------------------------------------------------- |
